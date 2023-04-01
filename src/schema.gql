@@ -1,0 +1,81 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+directive @upper on FIELD_DEFINITION
+
+type PersonContact {
+  id: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+  contact: Person
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Person {
+  id: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+  name: String!
+  surname: String!
+  age: Float
+  gender: GENDER
+  date: Date
+  phone: String
+  email: String
+  contacts: [PersonContact!]
+}
+
+enum GENDER {
+  MALE
+  FEMALE
+}
+
+"""
+A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
+type ListPersonOutput {
+  count: Float!
+  data: [Person!]!
+}
+
+type Query {
+  getPersonList(page: Int, limit: Int): ListPersonOutput!
+  getPerson(id: String!): Person!
+}
+
+type Mutation {
+  createPerson(createPerson: CreatePersonInput!): Person!
+  updatePerson(updatePerson: UpdatePersonInput!): Person!
+  deletePerson(id: String!): String!
+}
+
+input CreatePersonInput {
+  name: String!
+  surname: String!
+  age: Float
+  gender: GENDER
+  date: Date
+  phone: String
+  email: String
+  contacts: [String!]
+}
+
+input UpdatePersonInput {
+  id: String!
+  name: String
+  surname: String
+  age: Float
+  gender: GENDER
+  date: Date
+  phone: String
+  contacts: [String!]
+}
