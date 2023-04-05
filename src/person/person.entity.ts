@@ -18,7 +18,7 @@ export class Person extends Base {
 
     @Field(() => Number, { nullable: true })
     @Column({ name: 'age', type: 'int', nullable: true })
-    age: number;
+    age?: number;
 
     @Field(() => GENDER, { nullable: true })
     @Column({
@@ -27,23 +27,23 @@ export class Person extends Base {
         enum: ['male', 'female'],
         nullable: true,
     })
-    gender: string;
+    gender?: string;
 
     @Field(() => DateResolver, { nullable: true })
     @Column({ name: 'date', type: 'date', nullable: true })
-    date: Date;
+    date?: Date;
 
     @Field(() => String, { nullable: true })
     @Column({ name: 'phone', type: 'varchar', nullable: true })
-    phone: string;
+    phone?: string;
 
     @Field(() => String, { nullable: true })
     @Column({ name: 'email', type: 'varchar', unique: true })
-    email: string;
+    email?: string;
 
     @Field(() => [PersonContact], { nullable: true })
     @OneToMany(() => PersonContact, (personContact) => personContact.person, {
         nullable: true,
     })
-    contacts: PersonContact[];
+    contacts?: PersonContact[];
 }

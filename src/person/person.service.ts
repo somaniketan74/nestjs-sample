@@ -31,13 +31,18 @@ export class PersonService {
     }
 
     async createPersonContacts(person: Person, contacts: [string]) {
-        this.personContact.delete({ person });
-        contacts.map(async (contact) => {
+        await this.personContact
+            .createQueryBuilder('personcontact')
+            .delete()
+            .from(PersonContact)
+            .where('personId = :id', { id: person.id })
+            .execute();
+        for (const contact of contacts) {
             const newContact = new PersonContact();
             newContact.person = person;
             newContact.contact = await this.dataSource.getRepository(Person).findOne({ where: { id: contact } });
-            this.dataSource.getRepository(PersonContact).save(newContact);
-        });
+            await this.dataSource.getRepository(PersonContact).save(newContact);
+        }
     }
 
     async updatePerson(updatePersonInput: UpdatePersonInput): Promise<Person> {
@@ -50,11 +55,17 @@ export class PersonService {
                 [key]: updatePersonInput[key],
             });
         }
+        delete person.contacts;
         const personToUpdate = await this.personRepository.save(person);
-        if (updatePersonInput.contacts && updatePersonInput.contacts.length) {
+        if (Array.isArray(updatePersonInput.contacts)) {
             await this.createPersonContacts(personToUpdate, updatePersonInput.contacts);
         }
-        return personToUpdate;
+        return await this.personRepository
+            .createQueryBuilder('person')
+            .leftJoinAndSelect('person.contacts', 'contacts')
+            .leftJoinAndSelect('contacts.contact', 'contactperson')
+            .where('person.id = :id', { id: personToUpdate.id })
+            .getOne();
     }
 
     async deletePerson(id: string): Promise<string> {
